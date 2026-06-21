@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const Book = require('../models/Book');
 
-const csvFilePath = 'C:\\Users\\Teja\\Downloads\\archive (5)\\google_books_dataset.csv';
+const csvFilePath = path.join(__dirname, '..', 'assets', 'google_books_dataset.csv');
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/smart-library';
 
 async function importBooks() {
@@ -46,8 +46,13 @@ async function importBooks() {
       }
 
       // Handle default values and type casting
+      // Skip rows with Excel formula errors or empty book_id by generating a unique fallback
+      const rawId = row.book_id && row.book_id.trim();
+      const isValidId = rawId && !rawId.startsWith('#');
+      const datasetBookId = isValidId ? rawId : `gen_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
       const bookData = {
-        datasetBookId: row.book_id || Math.random().toString(36).substring(7),
+        datasetBookId,
         title: row.title || 'Untitled Book',
         subtitle: row.subtitle || '',
         authors: authorsList,
@@ -66,7 +71,7 @@ async function importBooks() {
       batch.push(bookData);
 
       if (batch.length >= BATCH_SIZE) {
-        await Book.insertMany(batch);
+        await Book.insertMany(batch, { ordered: false });
         count += batch.length;
         console.log(`Imported ${count} books...`);
         batch = [];
@@ -75,9 +80,8 @@ async function importBooks() {
 
     // Insert remaining records
     if (batch.length > 0) {
-      await Book.insertMany(batch);
+      await Book.insertMany(batch, { ordered: false });
       count += batch.length;
-      console.log(`Imported ${count} books total.`);
     }
 
     console.log('Seeding completed successfully!');
