@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html class="scroll-smooth light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Your Wishlist & Profile | Bookwise</title>
+  <!-- Google Fonts: Be Vietnam Pro for UI and Playfair Display for Serif headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans flex min-h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-white border-r border-outline-variant/60 flex flex-col justify-between p-6 fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 flex-shrink-0">
+    <div class="flex flex-col gap-8 relative">
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar()" class="lg:hidden absolute top-0 right-0 text-on-surface-variant hover:text-on-surface p-1 rounded-xl hover:bg-black/5 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 px-2 cursor-pointer" onclick="window.location.href='/'">
+        <span class="material-symbols-outlined text-primary text-[32px] font-bold">local_library</span>
+        <span class="font-serif text-2xl font-bold text-on-surface">Bookwise</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-2">
+        <!-- Home -->
+        <a href="/" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </a>
+        <!-- Explore -->
+        <a href="/explore.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">explore</span>
+          <span>Explore</span>
+        </a>
+        <!-- Wishlist (Active) -->
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-primary text-white font-semibold transition-all">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+          <span>Wishlist</span>
+        </a>
+        <!-- Profile (Active too for dashboard context) -->
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Card -->
+    <div class="bg-[#FAF7F5] rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden border border-outline-variant/30">
+      <div class="absolute -right-3 -top-3 w-10 h-10 bg-primary/5 rounded-full blur-xl"></div>
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+      <p class="text-xs text-on-surface font-semibold leading-relaxed">Keep reading, keep growing. Track your reading journey and discover your next favorite book.</p>
+      <button onclick="window.location.href='/explore.html'" class="w-full py-2.5 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+        Explore Catalog
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS -->
+  <div class="flex-grow min-h-screen flex flex-col justify-between min-w-0">
+    
+    <!-- Top Bar -->
+    <header class="h-20 px-6 lg:px-10 flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-30">
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileSidebar()" class="lg:hidden mr-3 p-2 -ml-2 text-on-surface-variant hover:text-on-surface hover:bg-black/5 rounded-xl transition-all flex items-center justify-center">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="text-sm font-medium text-on-surface-variant" id="welcome-message">Your Reading Oasis</div>
+      </div>
+      
+      <!-- User Profile Header Section -->
+      <div class="flex items-center gap-4" id="header-auth-section">
+        <!-- populated dynamically -->
+      </div>
+    </header>
+
+    <!-- Main Content Panel -->
+    <main class="px-10 flex-grow flex flex-col gap-8 max-w-[1200px] w-full mx-auto mb-12">
+      
+      <!-- Profile Banner Card -->
+      <section class="bg-white rounded-[24px] p-6 border border-outline-variant/60 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        <div class="flex items-center gap-5 relative z-10">
+          <div class="relative group cursor-pointer" onclick="triggerAvatarClick()">
+            <img id="profile-img" src="https://lh3.googleusercontent.com/aida-public/avatar-default.png" class="w-20 h-20 rounded-full border-2 border-primary object-cover transition-transform group-hover:scale-103 duration-300" />
+            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <span class="material-symbols-outlined text-white text-lg">add_a_photo</span>
+            </div>
+            <!-- Hidden avatar upload input -->
+            <input type="file" id="avatar-upload-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
+          </div>
+          
+          <div>
+            <!-- Display profile details -->
+            <div id="profile-display-area" class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <h2 id="profile-name" class="text-2xl font-serif font-extrabold text-on-surface">User Name</h2>
+                <button onclick="enableProfileEdit()" class="text-on-surface-variant hover:text-primary transition-colors p-1 flex items-center justify-center rounded-full hover:bg-zinc-50" title="Edit Profile Details">
+                  <span class="material-symbols-outlined text-[16px]">edit</span>
+                </button>
+              </div>
+              <p id="profile-username" class="text-sm text-on-surface-variant">@username</p>
+            </div>
+
+            <!-- Edit profile details form -->
+            <div id="profile-edit-area" class="hidden flex flex-col gap-2 bg-zinc-50/50 p-3 rounded-xl border border-outline-variant/40 max-w-xs">
+              <input type="text" id="edit-name-input" class="w-full px-3 py-1.5 bg-white border border-outline-variant/60 rounded-xl text-xs focus:ring-primary focus:border-primary" placeholder="Full Name" />
+              <input type="text" id="edit-username-input" class="w-full px-3 py-1.5 bg-white border border-outline-variant/60 rounded-xl text-xs focus:ring-primary focus:border-primary" placeholder="Username" />
+              <div class="flex gap-2 mt-1">
+                <button onclick="saveProfileChanges()" class="px-3 py-1.5 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-lg transition-colors">Save</button>
+                <button onclick="disableProfileEdit()" class="px-3 py-1.5 bg-zinc-200 hover:bg-zinc-300 text-on-surface text-xs font-bold rounded-lg transition-colors">Cancel</button>
+              </div>
+            </div>
+            
+            <span class="inline-block mt-2.5 px-3 py-0.5 bg-primary/5 border border-primary/20 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">Bookwise Reader</span>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="flex gap-8 items-center bg-[#FAF7F5] px-6 py-4 rounded-2xl border border-outline-variant/30 relative z-10">
+          <div class="text-center">
+            <h3 id="stat-wishlist" class="text-3xl font-serif font-extrabold text-primary">0</h3>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Wishlist Books</p>
+          </div>
+          <div class="w-px h-10 bg-outline-variant"></div>
+          <div class="text-center">
+            <h3 id="stat-rated" class="text-3xl font-serif font-extrabold text-primary">0</h3>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Rated Books</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Workspace -->
+      <div class="flex flex-col lg:flex-row gap-8 items-start w-full">
+        
+        <!-- Left Column: Wishlist (2/3 width) -->
+        <section class="flex-grow w-full lg:w-2/3 flex flex-col gap-6">
+          <div class="flex justify-between items-center">
+            <h3 class="font-serif text-2xl font-bold text-on-surface flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">bookmark</span> Saved Wishlist
+            </h3>
+            <button onclick="window.location.href='/explore.html'" class="px-4 py-2 border border-primary/20 hover:border-primary/45 hover:bg-primary/5 text-primary rounded-xl font-bold text-xs transition-colors flex items-center gap-1 active:scale-95">
+              <span class="material-symbols-outlined text-sm">explore</span> Find More Books
+            </button>
+          </div>
+
+          <div id="wishlist-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+            <!-- loaded dynamically -->
+          </div>
+        </section>
+
+        <!-- Right Column: Recommendations Sidebar (1/3 width) -->
+        <aside class="w-full lg:w-1/3 flex flex-col gap-6">
+          <h3 class="font-serif text-2xl font-bold text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span> Recommended For You
+          </h3>
+
+          <div id="recommendations-list" class="flex flex-col gap-4">
+            <!-- populated dynamically -->
+          </div>
+        </aside>
+
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-10 py-6 border-t border-outline-variant/60 text-xs text-on-surface-variant flex justify-between items-center max-w-[1200px] w-full mx-auto">
+      <p>© 2026 Bookwise. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    // Overwrite header info dynamically
+    const originalUpdateHeaderNav = updateHeaderNav;
+    updateHeaderNav = function() {
+      originalUpdateHeaderNav();
+      const welcome = document.getElementById('welcome-message');
+      const authSection = document.getElementById('header-auth-section');
+      if (currentUser && welcome) {
+        welcome.innerText = `Welcome back, ${currentUser.name}!`;
+        const dashboardLink = currentUser.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        authSection.innerHTML = `
+          <div class="flex items-center gap-4">
+            <a href="${dashboardLink}" class="flex items-center gap-2 group">
+              <img src="${currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary group-hover:scale-105 transition-transform object-cover" />
+              <span class="hidden md:inline font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${currentUser.name}</span>
+            </a>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-outline-variant rounded-xl text-on-surface hover:bg-black/5 font-semibold text-xs active:scale-95 transition-all">Logout</button>
+          </div>
+        `;
+      }
+    };
+
+    async function loadDashboardData() {
+      try {
+        // Fetch active user details
+        const status = await apiFetch('/api/auth/status');
+        if (status && status.user) {
+          currentUser = status.user;
+          document.getElementById('profile-name').innerText = currentUser.name;
+          document.getElementById('profile-username').innerText = `@${currentUser.username || currentUser.email.split('@')[0]}`;
+          if (currentUser.profileImage) {
+            document.getElementById('profile-img').src = currentUser.profileImage;
+          }
+          updateHeaderNav();
+        }
+
+        // Fetch wishlist items
+        const wishlist = await apiFetch('/api/wishlist');
+        if (wishlist) {
+          renderWishlist(wishlist);
+          document.getElementById('stat-wishlist').innerText = wishlist.length;
+        }
+
+        // Ratings count check from database ratings list if possible, or simple aggregate fallback
+        // Let's call /api/rating or simulate a count. Let's count wishlist + mock ratings for now or check user fields.
+        // Actually, we can count Rated books count simply or keep default stats
+        let ratedCount = localStorage.getItem('rated_books_count') || 0;
+        document.getElementById('stat-rated').innerText = ratedCount;
+
+        // Fetch recommended list
+        loadRecommendations();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderWishlist(books) {
+      const grid = document.getElementById('wishlist-grid');
+      if (books.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center border-2 border-dashed border-outline-variant/40 rounded-2xl bg-white">
+            <span class="material-symbols-outlined text-[48px] text-primary/40 mb-2">bookmark_border</span>
+            <p class="font-serif text-lg font-bold text-on-surface-variant">Wishlist is empty</p>
+            <p class="text-xs text-on-surface-variant mt-1 px-4">Explore our catalogue to add books to your reading list.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = books.map(book => {
+        const rating = book.averageRating ? book.averageRating.toFixed(1) : '2.5';
+        return `
+          <div class="bg-white rounded-2xl p-4 border border-outline-variant/30 shadow-sm flex flex-col justify-between group hover:border-primary/20 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+            <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="cursor-pointer flex flex-col gap-3">
+              <div class="aspect-[2/3] rounded-xl overflow-hidden shadow-sm relative bg-zinc-100">
+                <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300'}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" />
+                <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-0.5 font-bold">
+                  <span class="material-symbols-outlined text-amber-400 text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span>${rating}</span>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-on-surface line-clamp-1 leading-tight group-hover:text-primary transition-colors">${book.title}</h4>
+                <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+              </div>
+            </div>
+            <button onclick="removeFromWishlist('${book._id}')" class="w-full mt-4 py-2 text-xs border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-xl font-bold flex items-center justify-center gap-1 transition-all active:scale-[0.98]">
+              <span class="material-symbols-outlined text-sm">delete</span> Remove
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadRecommendations() {
+      const recList = document.getElementById('recommendations-list');
+      const historyStr = localStorage.getItem('search_history_categories') || '[]';
+      
+      try {
+        const recommended = await apiFetch(`/api/recommendations?historyCategories=${encodeURIComponent(historyStr)}`);
+        if (recommended && recommended.length > 0) {
+          recList.innerHTML = recommended.slice(0, 5).map(book => {
+            const rating = book.averageRating ? book.averageRating.toFixed(1) : '2.5';
+            return `
+              <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="bg-white rounded-2xl p-3 border border-outline-variant/30 shadow-sm hover:shadow-md hover:translate-x-1 cursor-pointer flex gap-4 transition-all duration-300 group">
+                <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=100'}" class="w-16 h-20 object-cover rounded-lg shadow-sm bg-zinc-100 flex-shrink-0" />
+                <div class="flex flex-col justify-between py-1 overflow-hidden">
+                  <div>
+                    <h4 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1 leading-tight">${book.title}</h4>
+                    <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+                  </div>
+                  <div class="flex items-center gap-1 text-amber-500 font-bold text-xs mt-1">
+                    <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+                    <span>${rating}</span>
+                    <span class="text-zinc-300 mx-1">|</span>
+                    <span class="text-on-surface-variant text-[9px] uppercase font-bold tracking-wider truncate">${book.categories && book.categories[0] ? book.categories[0] : 'General'}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          recList.innerHTML = `
+            <div class="p-5 text-center bg-white border border-outline-variant/40 rounded-2xl text-xs text-on-surface-variant">
+              Add books to wishlist or explore search filters to trigger recommendations.
+            </div>
+          `;
+        }
+      } catch (e) {
+        recList.innerHTML = '<p class="text-sm text-on-surface-variant">Error loading recommendations.</p>';
+      }
+    }
+
+    async function removeFromWishlist(bookId) {
+      try {
+        await apiFetch(`/api/wishlist/${bookId}`, { method: 'DELETE' });
+        showToast('Removed from wishlist');
+        loadDashboardData();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Profile Edits Inline
+    function enableProfileEdit() {
+      document.getElementById('profile-display-area').classList.add('hidden');
+      document.getElementById('profile-edit-area').classList.remove('hidden');
+      document.getElementById('edit-name-input').value = currentUser.name || '';
+      document.getElementById('edit-username-input').value = currentUser.username || '';
+    }
+
+    function disableProfileEdit() {
+      document.getElementById('profile-display-area').classList.remove('hidden');
+      document.getElementById('profile-edit-area').classList.add('hidden');
+    }
+
+    async function saveProfileChanges() {
+      const name = document.getElementById('edit-name-input').value;
+      const username = document.getElementById('edit-username-input').value;
+      if (!name || !username) {
+        showToast('Name and username are required.', 'error');
+        return;
+      }
+      try {
+        const data = await apiFetch('/api/profile', {
+          method: 'PUT',
+          body: { name, username }
+        });
+        if (data) {
+          showToast('Profile updated successfully!');
+          currentUser = data.user;
+          document.getElementById('profile-name').innerText = currentUser.name;
+          document.getElementById('profile-username').innerText = `@${currentUser.username}`;
+          disableProfileEdit();
+          updateHeaderNav();
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // File Upload Avatar Edit
+    function triggerAvatarClick() {
+      document.getElementById('avatar-upload-input').click();
+    }
+
+    async function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function() {
+        const base64Data = reader.result;
+        try {
+          const data = await apiFetch('/api/profile', {
+            method: 'PUT',
+            body: { profileImage: base64Data }
+          });
+          if (data) {
+            showToast('Profile image updated successfully!');
+            document.getElementById('profile-img').src = base64Data;
+            // update header
+            const headerImg = document.querySelector('header img');
+            if (headerImg) headerImg.src = base64Data;
+          }
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Default Loader
+    loadDashboardData();
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
+    }
+  </script>
+</body>
+</html>

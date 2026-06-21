@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html class="scroll-smooth light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Book Details | Bookwise</title>
+  <!-- Google Fonts: Be Vietnam Pro for UI and Playfair Display for Serif headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans flex min-h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-white border-r border-outline-variant/60 flex flex-col justify-between p-6 fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 flex-shrink-0">
+    <div class="flex flex-col gap-8 relative">
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar()" class="lg:hidden absolute top-0 right-0 text-on-surface-variant hover:text-on-surface p-1 rounded-xl hover:bg-black/5 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 px-2 cursor-pointer" onclick="window.location.href='/'">
+        <span class="material-symbols-outlined text-primary text-[32px] font-bold">local_library</span>
+        <span class="font-serif text-2xl font-bold text-on-surface">Bookwise</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-2">
+        <!-- Home -->
+        <a href="/" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </a>
+        <!-- Explore -->
+        <a href="/explore.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">explore</span>
+          <span>Explore</span>
+        </a>
+        <!-- Wishlist -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">bookmark</span>
+          <span>Wishlist</span>
+        </a>
+        <!-- Profile -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Card -->
+    <div class="bg-[#FAF7F5] rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden border border-outline-variant/30">
+      <div class="absolute -right-3 -top-3 w-10 h-10 bg-primary/5 rounded-full blur-xl"></div>
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+      <p class="text-xs text-on-surface font-semibold leading-relaxed">Keep reading, keep growing. Track your reading journey and discover your next favorite book.</p>
+      <button onclick="window.location.href='/explore.html'" class="w-full py-2.5 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+        Explore Catalog
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS -->
+  <div class="flex-grow min-h-screen flex flex-col justify-between min-w-0">
+    
+    <!-- Top Bar -->
+    <header class="h-20 px-6 lg:px-10 flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-30">
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileSidebar()" class="lg:hidden mr-3 p-2 -ml-2 text-on-surface-variant hover:text-on-surface hover:bg-black/5 rounded-xl transition-all flex items-center justify-center">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="text-sm font-medium text-on-surface-variant" id="welcome-message">Book Details &amp; Ratings</div>
+      </div>
+      
+      <!-- Auth Actions -->
+      <div class="flex items-center gap-4" id="header-auth-section">
+        <button onclick="openLoginModal()" class="px-5 py-2 rounded-xl text-primary font-semibold text-sm hover:bg-primary/5 transition-all">Sign In</button>
+        <button onclick="window.location.href='/register.html'" class="px-5 py-2 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-container transition-all shadow-sm">Register</button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="px-10 flex-grow max-w-[1200px] w-full mx-auto mb-12">
+      
+      <!-- Loading skeleton -->
+      <div id="loading-container" class="animate-pulse flex flex-col md:flex-row gap-8 py-10">
+        <div class="w-full md:w-1/3 aspect-[2/3] bg-zinc-200 rounded-2xl"></div>
+        <div class="flex-grow flex flex-col gap-4">
+          <div class="h-8 bg-zinc-200 rounded w-1/2"></div>
+          <div class="h-4 bg-zinc-200 rounded w-1/4"></div>
+          <div class="h-20 bg-zinc-200 rounded w-full"></div>
+        </div>
+      </div>
+
+      <!-- Main Details Panel (Hidden by default) -->
+      <div id="details-container" class="hidden flex flex-col md:flex-row gap-10 py-6 items-start">
+        <!-- Left Side: Cover Image and interactive buttons -->
+        <div class="w-full md:w-[320px] flex flex-col gap-6 flex-shrink-0">
+          <div class="bg-white p-4 rounded-[24px] border border-outline-variant/60 shadow-sm flex justify-center aspect-[2/3] overflow-hidden">
+            <img id="book-image" class="w-full h-full object-cover rounded-xl shadow-sm" src="" alt="Book Cover" />
+          </div>
+
+          <!-- Interaction Actions -->
+          <div class="flex gap-3">
+            <button id="wishlist-btn" onclick="toggleWishlist()" class="flex-grow py-3.5 border border-primary text-primary hover:bg-primary/5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all duration-200">
+              <span class="material-symbols-outlined text-sm" id="wishlist-icon">bookmark</span>
+              <span id="wishlist-text">Add to Wishlist</span>
+            </button>
+            <button id="like-btn" onclick="toggleLike()" class="py-3.5 px-5 bg-primary hover:bg-primary-container text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all duration-200 shadow-sm">
+              <span class="material-symbols-outlined text-sm" id="like-icon">favorite</span>
+              <span id="likes-count">0</span>
+            </button>
+          </div>
+
+          <!-- Google Books Link -->
+          <div id="preview-container" class="hidden">
+            <a id="preview-link" target="_blank" href="" class="w-full py-3.5 bg-zinc-800 hover:bg-zinc-950 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-sm">
+              <span class="material-symbols-outlined text-sm">menu_book</span> Open Google Books Preview
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: Details Metadata -->
+        <div class="flex-grow flex flex-col gap-6">
+          <div>
+            <span id="book-category" class="px-3 py-1 bg-primary/5 text-primary border border-primary/20 rounded-full text-[10px] font-bold uppercase tracking-wider">Category</span>
+            <h1 id="book-title" class="text-4xl font-serif font-extrabold text-on-surface mt-3 leading-tight">Book Title</h1>
+            <p id="book-subtitle" class="text-lg text-on-surface-variant mt-1.5 italic font-medium">Book Subtitle</p>
+            <p class="text-sm font-semibold text-primary mt-2">By <span id="book-authors" class="underline">Author Name</span></p>
+          </div>
+
+          <!-- Stats Quick info -->
+          <div class="flex items-center gap-6 py-4 border-y border-outline-variant/60">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-amber-500 text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span id="book-rating" class="text-xl font-extrabold text-on-surface">2.5</span>
+              <span class="text-on-surface-variant text-xs font-semibold">/ 5.0</span>
+            </div>
+            <div class="w-px h-6 bg-outline-variant"></div>
+            <div>
+              <p id="book-ratings-count" class="font-bold text-sm text-on-surface">0</p>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Total Ratings</p>
+            </div>
+            <div class="w-px h-6 bg-outline-variant"></div>
+            <div>
+              <p id="book-page-count" class="font-bold text-sm text-on-surface">N/A</p>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Pages</p>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="flex flex-col gap-2">
+            <h3 class="font-serif text-lg font-bold text-on-surface">Description</h3>
+            <p id="book-description" class="text-xs font-medium text-on-surface-variant leading-relaxed max-w-3xl">No description available.</p>
+          </div>
+
+          <!-- Metadata table -->
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-xl bg-white p-5 rounded-2xl border border-outline-variant/40">
+            <div>
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Publisher</span>
+              <span id="book-publisher" class="font-bold text-xs text-on-surface block mt-0.5">Unknown</span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Published Date</span>
+              <span id="book-published-date" class="font-bold text-xs text-on-surface block mt-0.5">Unknown</span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">ISBN 13</span>
+              <span id="book-isbn" class="font-bold text-xs text-on-surface block mt-0.5">Unknown</span>
+            </div>
+          </div>
+
+          <!-- User Rating System -->
+          <div class="bg-[#FAF7F5]/50 border border-outline-variant/60 p-5 rounded-2xl flex flex-col gap-3 max-w-md">
+            <div>
+              <h4 class="font-serif font-bold text-on-surface text-base">Have you read this book?</h4>
+              <p class="text-xs text-on-surface-variant mt-0.5">Leave a rating to help feed your recommendation feed.</p>
+            </div>
+            
+            <div class="flex items-center gap-1" id="star-rating-container">
+              <button onclick="submitRating(1)" class="text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none"><span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+              <button onclick="submitRating(2)" class="text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none"><span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+              <button onclick="submitRating(3)" class="text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none"><span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+              <button onclick="submitRating(4)" class="text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none"><span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+              <button onclick="submitRating(5)" class="text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none"><span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Recommendation Grid -->
+      <section class="mt-12 border-t border-outline-variant/60 pt-10">
+        <h3 class="font-serif text-2xl font-bold text-on-surface mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">collections_bookmark</span> Similar Books You Might Like
+        </h3>
+        <div id="similar-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+          <!-- loaded dynamically -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-10 py-6 border-t border-outline-variant/60 text-xs text-on-surface-variant flex justify-between items-center max-w-[1200px] w-full mx-auto">
+      <p>© 2026 Bookwise. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Login Modal Placeholder (Just in case user needs to login directly here) -->
+  <div id="login-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+    <div class="relative glass-card bg-white rounded-2xl p-8 max-w-md w-full">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      
+      <div class="text-center mb-6">
+        <span class="material-symbols-outlined text-[40px] text-primary">local_library</span>
+        <h2 class="font-serif text-2xl font-bold text-on-surface mt-2">Welcome to Bookwise</h2>
+        <p class="text-xs text-on-surface-variant mt-1">Please log in on the homepage to access rating and wishlist tools.</p>
+      </div>
+      <button onclick="window.location.href='/'" class="w-full py-3.5 bg-primary text-white font-bold text-sm rounded-lg shadow-sm hover:bg-primary-container">
+        Go to Home Portal
+      </button>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let currentBookId = '';
+    let isWishlisted = false;
+    let isLiked = false;
+
+    // Extract book ID from query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('id');
+
+    // Override updateHeaderNav
+    const originalUpdateHeaderNav = updateHeaderNav;
+    updateHeaderNav = function() {
+      originalUpdateHeaderNav();
+      const welcome = document.getElementById('welcome-message');
+      const authSection = document.getElementById('header-auth-section');
+      if (currentUser && welcome) {
+        welcome.innerText = `Welcome back, ${currentUser.name}!`;
+        const dashboardLink = currentUser.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        authSection.innerHTML = `
+          <div class="flex items-center gap-4">
+            <a href="${dashboardLink}" class="flex items-center gap-2 group">
+              <img src="${currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary group-hover:scale-105 transition-transform object-cover" />
+              <span class="hidden md:inline font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${currentUser.name}</span>
+            </a>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-outline-variant rounded-xl text-on-surface hover:bg-black/5 font-semibold text-xs active:scale-95 transition-all">Logout</button>
+          </div>
+        `;
+      }
+    };
+
+    async function loadBookDetails() {
+      if (!bookId) {
+        showToast('No book ID provided.', 'error');
+        return;
+      }
+
+      try {
+        const data = await apiFetch(`/api/books/${bookId}`);
+        if (data && data.book) {
+          currentBookId = data.book._id;
+          displayBook(data.book);
+          displaySimilar(data.similarBooks);
+          
+          checkUserInteractions();
+          
+          if (data.book.categories && data.book.categories.length > 0) {
+            saveToSearchHistory(data.book.categories[0]);
+          }
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function displayBook(book) {
+      document.getElementById('loading-container').classList.add('hidden');
+      document.getElementById('details-container').classList.remove('hidden');
+
+      document.getElementById('book-image').src = book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300';
+      document.getElementById('book-category').innerText = book.categories && book.categories.length > 0 ? book.categories[0] : 'General';
+      document.getElementById('book-title').innerText = book.title;
+      document.getElementById('book-subtitle').innerText = book.subtitle || '';
+      document.getElementById('book-authors').innerText = book.authors ? book.authors.join(', ') : 'Unknown Author';
+      
+      const ratingVal = book.averageRating ? book.averageRating.toFixed(1) : '2.5';
+      document.getElementById('book-rating').innerText = ratingVal;
+      
+      document.getElementById('book-ratings-count').innerText = book.ratingsCount || 0;
+      document.getElementById('book-page-count').innerText = book.pageCount || 'N/A';
+      document.getElementById('book-description').innerText = book.description || 'No description available.';
+      document.getElementById('book-publisher').innerText = book.publisher || 'Unknown';
+      document.getElementById('book-published-date').innerText = book.publishedDate || 'Unknown';
+      document.getElementById('book-isbn').innerText = book.isbn13 || 'Unknown';
+      document.getElementById('likes-count').innerText = book.likes || 0;
+
+      if (book.preview_link) {
+        document.getElementById('preview-link').href = book.preview_link;
+        document.getElementById('preview-container').classList.remove('hidden');
+      }
+    }
+
+    function displaySimilar(books) {
+      const grid = document.getElementById('similar-grid');
+      if (!books || books.length === 0) {
+        grid.innerHTML = '<p class="col-span-full text-xs text-on-surface-variant">No similar books found.</p>';
+        return;
+      }
+
+      grid.innerHTML = books.map(book => {
+        const rating = book.averageRating ? book.averageRating.toFixed(1) : '2.5';
+        return `
+          <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="cursor-pointer group flex flex-col gap-2 transition-all duration-300">
+            <div class="aspect-[2/3] rounded-xl overflow-hidden shadow-sm group-hover:shadow-md group-hover:scale-102 transition-all duration-300 bg-zinc-100 relative">
+              <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300'}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" />
+              <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-[9px] px-1.5 py-0.5 rounded flex items-center gap-0.5 font-bold">
+                <span class="material-symbols-outlined text-amber-400 text-[9px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span>${rating}</span>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-on-surface line-clamp-1 leading-tight group-hover:text-primary transition-colors">${book.title}</h4>
+              <p class="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function checkUserInteractions() {
+      try {
+        const wishlist = await apiFetch('/api/wishlist');
+        if (wishlist) {
+          isWishlisted = wishlist.some(b => b._id === currentBookId);
+          updateWishlistUI();
+        }
+      } catch (e) {}
+    }
+
+    function updateWishlistUI() {
+      const btn = document.getElementById('wishlist-btn');
+      const text = document.getElementById('wishlist-text');
+      const icon = document.getElementById('wishlist-icon');
+      
+      if (isWishlisted) {
+        btn.className = 'flex-grow py-3.5 bg-primary text-white hover:bg-primary-container rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all duration-200 shadow-sm';
+        text.innerText = 'On Wishlist';
+        icon.style.fontVariationSettings = "'FILL' 1";
+      } else {
+        btn.className = 'flex-grow py-3.5 border border-primary text-primary hover:bg-primary/5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all duration-200';
+        text.innerText = 'Add to Wishlist';
+        icon.style.fontVariationSettings = "'FILL' 0";
+      }
+    }
+
+    async function toggleWishlist() {
+      try {
+        if (isWishlisted) {
+          await apiFetch(`/api/wishlist/${currentBookId}`, { method: 'DELETE' });
+          isWishlisted = false;
+          showToast('Removed from wishlist', 'info');
+        } else {
+          await apiFetch('/api/wishlist', {
+            method: 'POST',
+            body: { bookId: currentBookId }
+          });
+          isWishlisted = true;
+          showToast('Added to wishlist', 'success');
+        }
+        updateWishlistUI();
+      } catch (err) {
+        showToast('Please sign in to manage your wishlist.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    async function toggleLike() {
+      try {
+        const data = await apiFetch(`/api/books/${currentBookId}/like`, { method: 'POST' });
+        if (data) {
+          isLiked = data.liked;
+          document.getElementById('likes-count').innerText = parseInt(document.getElementById('likes-count').innerText) + (isLiked ? 1 : -1);
+          document.getElementById('like-icon').style.fontVariationSettings = isLiked ? "'FILL' 1" : "'FILL' 0";
+          showToast(isLiked ? 'Book added to favorites!' : 'Book removed from favorites', 'success');
+        }
+      } catch (err) {
+        showToast('Please sign in to like books.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    async function submitRating(stars) {
+      try {
+        const data = await apiFetch('/api/rating', {
+          method: 'POST',
+          body: { bookId: currentBookId, rating: stars }
+        });
+        if (data) {
+          showToast(`Rated ${stars} stars!`, 'success');
+          document.getElementById('book-rating').innerText = data.averageRating.toFixed(1);
+          document.getElementById('book-ratings-count').innerText = data.ratingsCount;
+          updateStarsUI(stars);
+          
+          // Increment locally tracked rated count
+          let ratedCount = parseInt(localStorage.getItem('rated_books_count') || 0);
+          localStorage.setItem('rated_books_count', ratedCount + 1);
+        }
+      } catch (err) {
+        showToast('Please sign in to rate books.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    function updateStarsUI(activeStars) {
+      const btns = document.querySelectorAll('#star-rating-container button');
+      btns.forEach((btn, index) => {
+        if (index < activeStars) {
+          btn.className = 'text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none';
+        } else {
+          btn.className = 'text-zinc-300 hover:text-amber-500 hover:scale-105 active:scale-95 transition-all duration-150 focus:outline-none';
+        }
+      });
+    }
+
+    function saveToSearchHistory(category) {
+      try {
+        let history = JSON.parse(localStorage.getItem('search_history_categories')) || [];
+        if (!history.includes(category)) {
+          history.push(category);
+          if (history.length > 5) history.shift();
+          localStorage.setItem('search_history_categories', JSON.stringify(history));
+        }
+      } catch (e) {}
+    }
+
+    function openLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    function handleProtectedLink(url) {
+      if (currentUser) {
+        window.location.href = url;
+      } else {
+        showToast('Please sign in to access your profile.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    // Load initial data
+    loadBookDetails();
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
+    }
+  </script>
+</body>
+</html>

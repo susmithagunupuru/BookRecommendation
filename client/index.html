@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="scroll-smooth light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Bookwise | Find Books That Inspire You</title>
+  <!-- Google Fonts: Be Vietnam Pro for UI and Playfair Display for Serif headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans flex min-h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-white border-r border-outline-variant/60 flex flex-col justify-between p-6 fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 flex-shrink-0">
+    <div class="flex flex-col gap-8 relative">
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar()" class="lg:hidden absolute top-0 right-0 text-on-surface-variant hover:text-on-surface p-1 rounded-xl hover:bg-black/5 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 px-2 cursor-pointer" onclick="window.location.href='/'">
+        <span class="material-symbols-outlined text-primary text-[32px] font-bold">local_library</span>
+        <span class="font-serif text-2xl font-bold text-on-surface">Bookwise</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-2">
+        <!-- Home (Active) -->
+        <a href="/" class="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-primary text-white font-semibold transition-all">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+          <span>Home</span>
+        </a>
+        <!-- Explore -->
+        <a href="/explore.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">explore</span>
+          <span>Explore</span>
+        </a>
+        <!-- Wishlist -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">bookmark</span>
+          <span>Wishlist</span>
+        </a>
+        <!-- Profile -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html?tab=profile')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Card -->
+    <div class="bg-[#FAF7F5] rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden border border-outline-variant/30">
+      <div class="absolute -right-3 -top-3 w-10 h-10 bg-primary/5 rounded-full blur-xl"></div>
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+      <p class="text-xs text-on-surface font-semibold leading-relaxed">Keep reading, keep growing. Track your reading journey and discover your next favorite book.</p>
+      <button onclick="handleStartReading()" class="w-full py-2.5 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+        Start Reading
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS (Offset by sidebar width) -->
+  <div class="flex-grow min-h-screen flex flex-col justify-between min-w-0">
+    
+    <!-- Top Bar (Header) -->
+    <header class="h-20 px-6 lg:px-10 flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-30">
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileSidebar()" class="lg:hidden mr-3 p-2 -ml-2 text-on-surface-variant hover:text-on-surface hover:bg-black/5 rounded-xl transition-all flex items-center justify-center">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <!-- Search status or info placeholder -->
+        <div class="text-sm font-medium text-on-surface-variant" id="welcome-message">Welcome to Bookwise</div>
+      </div>
+      
+      <!-- Auth Actions -->
+      <div class="flex items-center gap-4" id="header-auth-section">
+        <button onclick="openLoginModal()" class="px-5 py-2 rounded-xl text-primary font-semibold text-sm hover:bg-primary/5 transition-all">Sign In</button>
+        <button onclick="window.location.href='/register.html'" class="px-5 py-2 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-container transition-all shadow-sm">Register</button>
+      </div>
+    </header>
+
+    <!-- Main Content Panel -->
+    <main class="px-12 flex-grow flex flex-col gap-12 max-w-[1200px] w-full mx-auto">
+      
+      <!-- Hero Center Panel -->
+      <section class="flex flex-col items-center text-center pt-8 gap-6 max-w-2xl mx-auto">
+        <h1 class="text-5xl font-serif font-extrabold text-on-surface leading-tight tracking-tight">
+          Find Books That <br/> Inspire <span class="text-primary font-serif">You</span>
+        </h1>
+        <p class="text-on-surface-variant text-sm font-medium leading-relaxed">
+          Personalized recommendations, handpicked collections, and stories that stay with you.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="relative w-full max-w-xl mt-2">
+          <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[24px] pointer-events-none">search</span>
+          <input type="text" id="hero-search" onkeyup="handleHeroSearchKey(event)" class="w-full pl-14 pr-4 py-4 bg-white border border-outline-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-full shadow-sm text-sm dark:text-white transition-all placeholder:text-on-surface-variant/70" placeholder="Search books, authors, genres..." />
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button onclick="handleGetRecommendations()" class="px-6 py-3 bg-primary hover:bg-primary-container text-white font-semibold text-sm rounded-xl transition-all shadow-md active:scale-95">
+            Get Recommendations
+          </button>
+          <a href="/explore.html" class="flex items-center gap-1 font-bold text-sm text-on-surface hover:text-primary transition-colors">
+            Explore All <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- Top Picks / Recommendations Block -->
+      <section class="flex flex-col gap-6 pt-4">
+        <div class="flex justify-between items-center">
+          <h3 class="font-serif text-2xl font-bold text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">recommend</span> Top Picks For You
+          </h3>
+          <a href="/explore.html" class="text-primary font-bold text-sm hover:underline flex items-center gap-1">View all <span class="material-symbols-outlined text-xs">chevron_right</span></a>
+        </div>
+
+        <!-- Book Cards Grid -->
+        <div id="top-picks-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+          <!-- Skeletons loaded initially -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-12 py-8 border-t border-outline-variant/60 text-xs text-on-surface-variant flex justify-between items-center max-w-[1200px] w-full mx-auto">
+      <p>© 2026 Bookwise. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+        <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+    <div class="relative glass-card bg-white rounded-2xl p-8 max-w-md w-full animate-in zoom-in-95 duration-200">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      
+      <div class="text-center mb-6">
+        <span class="material-symbols-outlined text-[40px] text-primary">local_library</span>
+        <h2 class="font-serif text-2xl font-bold text-on-surface mt-2">Welcome to Bookwise</h2>
+        <p class="text-xs text-on-surface-variant mt-1">Log in to manage your smart library account.</p>
+      </div>
+
+      <!-- Portal Tabs -->
+      <div class="flex border-b border-outline-variant/30 mb-6">
+        <button id="tab-user" onclick="switchLoginTab('user')" class="flex-1 py-3 text-center font-semibold border-b-2 border-primary text-primary text-sm">User Portal</button>
+        <button id="tab-admin" onclick="switchLoginTab('admin')" class="flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-on-surface-variant text-sm">Admin Portal</button>
+      </div>
+
+      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-on-surface mb-1" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant rounded-lg text-sm" placeholder="email@domain.com" required />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-on-surface mb-1" for="login-password">Password</label>
+          <input type="password" id="login-password" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant rounded-lg text-sm" placeholder="••••••••" required />
+        </div>
+        
+        <!-- Admin Secret Key Input (Hidden by default) -->
+        <div id="admin-secret-container" class="hidden">
+          <label class="block text-xs font-semibold text-on-surface mb-1" for="login-secret">Admin Secret Key</label>
+          <input type="password" id="login-secret" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant rounded-lg text-sm" placeholder="Secret Access Key" />
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <label class="flex items-center gap-2 cursor-pointer text-on-surface-variant">
+            <input type="checkbox" class="rounded border-outline-variant text-primary focus:ring-primary" /> Remember me
+          </label>
+          <a href="#" onclick="handleForgotPassword()" class="text-primary hover:underline">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-primary text-white font-bold text-sm rounded-lg shadow-sm hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+          <span>Log In</span>
+          <span class="material-symbols-outlined text-[18px]">login</span>
+        </button>
+      </form>
+
+      <div class="text-center mt-6 border-t border-outline-variant/30 pt-4">
+        <p class="text-xs text-on-surface-variant">
+          New to Bookwise? 
+          <a class="text-primary font-bold hover:underline ml-1" href="/register.html">Register here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let activeTab = 'user';
+
+    // Override updateHeaderNav dynamically to support sidebar layout changes
+    const originalUpdateHeaderNav = updateHeaderNav;
+    updateHeaderNav = function() {
+      originalUpdateHeaderNav();
+      
+      const welcome = document.getElementById('welcome-message');
+      const authSection = document.getElementById('header-auth-section');
+      
+      if (currentUser && welcome) {
+        welcome.innerText = `Welcome back, ${currentUser.name}!`;
+        
+        const dashboardLink = currentUser.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        authSection.innerHTML = `
+          <div class="flex items-center gap-4">
+            <a href="${dashboardLink}" class="flex items-center gap-2 group">
+              <img src="${currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary group-hover:scale-105 transition-transform" />
+              <span class="hidden md:inline font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${currentUser.name}</span>
+            </a>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-outline-variant rounded-xl text-on-surface hover:bg-black/5 font-semibold text-xs active:scale-95 transition-all">Logout</button>
+          </div>
+        `;
+      }
+    };
+
+    function openLoginModal(tab = 'user') {
+      document.getElementById('login-modal').classList.remove('hidden');
+      switchLoginTab(tab);
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    function switchLoginTab(tab) {
+      activeTab = tab;
+      const userTab = document.getElementById('tab-user');
+      const adminTab = document.getElementById('tab-admin');
+      const secretContainer = document.getElementById('admin-secret-container');
+
+      if (tab === 'user') {
+        userTab.className = 'flex-1 py-3 text-center font-semibold border-b-2 border-primary text-primary text-sm';
+        adminTab.className = 'flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-on-surface-variant text-sm';
+        secretContainer.classList.add('hidden');
+        document.getElementById('login-secret').required = false;
+      } else {
+        adminTab.className = 'flex-1 py-3 text-center font-semibold border-b-2 border-primary text-primary text-sm';
+        userTab.className = 'flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-on-surface-variant text-sm';
+        secretContainer.classList.remove('hidden');
+        document.getElementById('login-secret').required = true;
+      }
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const secretKey = document.getElementById('login-secret').value;
+
+      try {
+        const data = await apiFetch('/api/auth/login', {
+          method: 'POST',
+          body: { email, password, role: activeTab, secretKey }
+        });
+
+        if (data && data.user) {
+          showToast('Logged in successfully!');
+          closeLoginModal();
+          setTimeout(() => {
+            window.location.href = data.user.role === 'admin' ? '/admin.html' : '/dashboard.html';
+          }, 800);
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function handleForgotPassword() {
+      const email = prompt('Enter your registered email address:');
+      if (!email) return;
+
+      try {
+        const data = await apiFetch('/api/auth/forgot-password', { method: 'POST', body: { email } });
+        if (data && data.resetToken) {
+          const newPassword = prompt(`Password reset link mock triggered. Enter your new password (token: ${data.resetToken}):`);
+          if (!newPassword) return;
+
+          await apiFetch('/api/auth/reset-password', {
+            method: 'POST',
+            body: { resetToken: data.resetToken, password: newPassword }
+          });
+          showToast('Password reset successfully! Please login.');
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function handleProtectedLink(url) {
+      if (currentUser) {
+        window.location.href = url;
+      } else {
+        showToast('Please sign in to access this page.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    function handleStartReading() {
+      if (currentUser) {
+        window.location.href = '/explore.html';
+      } else {
+        openLoginModal();
+      }
+    }
+
+    function handleGetRecommendations() {
+      if (currentUser) {
+        window.location.href = '/dashboard.html';
+      } else {
+        openLoginModal();
+      }
+    }
+
+    function handleHeroSearchKey(e) {
+      if (e.key === 'Enter') {
+        const query = e.target.value;
+        if (query) {
+          window.location.href = `/explore.html?search=${encodeURIComponent(query)}`;
+        }
+      }
+    }
+
+    async function loadTopPicks() {
+      const grid = document.getElementById('top-picks-grid');
+      // Render skeletons
+      grid.innerHTML = Array(5).fill(0).map(() => `
+        <div class="flex flex-col gap-3 animate-pulse">
+          <div class="w-full aspect-[2/3] bg-zinc-200 rounded-xl"></div>
+          <div class="h-3 bg-zinc-200 rounded w-3/4"></div>
+          <div class="h-2 bg-zinc-200 rounded w-1/2"></div>
+        </div>
+      `).join('');
+
+      try {
+        const data = await apiFetch('/api/books?limit=5');
+        if (data && data.books) {
+          grid.innerHTML = data.books.map(book => `
+            <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="cursor-pointer group flex flex-col justify-between transition-all duration-300">
+              <div class="flex flex-col gap-2">
+                <div class="aspect-[2/3] rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300 relative bg-zinc-100">
+                  <img src="${book.image}" class="w-full h-full object-cover group-hover:scale-103 transition-transform" />
+                  <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 font-bold">
+                    <span class="material-symbols-outlined text-amber-400 text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    <span>${book.averageRating ? book.averageRating.toFixed(1) : '2.5'}</span>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-on-surface line-clamp-1 leading-tight mt-1 group-hover:text-primary transition-colors">${book.title}</h4>
+                  <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        grid.innerHTML = '<p class="col-span-full text-xs text-on-surface-variant">Failed to load top picks.</p>';
+      }
+    }
+
+    loadTopPicks();
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Explore | Bookwise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans flex min-h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-white border-r border-outline-variant/60 flex flex-col justify-between p-6 fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 flex-shrink-0">
+    <div class="flex flex-col gap-8 relative">
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar()" class="lg:hidden absolute top-0 right-0 text-on-surface-variant hover:text-on-surface p-1 rounded-xl hover:bg-black/5 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 px-2 cursor-pointer" onclick="window.location.href='/'">
+        <span class="material-symbols-outlined text-primary text-[32px] font-bold">local_library</span>
+        <span class="font-serif text-2xl font-bold text-on-surface">Bookwise</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-2">
+        <!-- Home -->
+        <a href="/" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </a>
+        <!-- Explore (Active) -->
+        <a href="/explore.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-primary text-white font-semibold transition-all">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+          <span>Explore</span>
+        </a>
+        <!-- Wishlist -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">bookmark</span>
+          <span>Wishlist</span>
+        </a>
+        <!-- Profile -->
+        <a href="#" onclick="handleProtectedLink('/dashboard.html?tab=profile')" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Card -->
+    <div class="bg-[#FAF7F5] rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden border border-outline-variant/30">
+      <div class="absolute -right-3 -top-3 w-10 h-10 bg-primary/5 rounded-full blur-xl"></div>
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+      <p class="text-xs text-on-surface font-semibold leading-relaxed">Keep reading, keep growing. Track your reading journey and discover your next favorite book.</p>
+      <button onclick="handleStartReading()" class="w-full py-2.5 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+        Start Reading
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS -->
+  <div class="flex-grow min-h-screen flex flex-col justify-between min-w-0">
+    
+    <!-- Top Bar -->
+    <header class="h-20 px-6 lg:px-10 flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-30">
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileSidebar()" class="lg:hidden mr-3 p-2 -ml-2 text-on-surface-variant hover:text-on-surface hover:bg-black/5 rounded-xl transition-all flex items-center justify-center">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="text-sm font-medium text-on-surface-variant" id="welcome-message">Search our global library catalog</div>
+      </div>
+      
+      <div class="flex items-center gap-4" id="header-auth-section">
+        <button onclick="openLoginModal()" class="px-5 py-2 rounded-xl text-primary font-semibold text-sm hover:bg-primary/5">Sign In</button>
+        <button onclick="window.location.href='/register.html'" class="px-5 py-2 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-container shadow-sm">Register</button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="px-10 flex-grow flex flex-col md:flex-row gap-8 max-w-[1200px] w-full mx-auto mb-12 items-start">
+      
+      <!-- Left side: Filters -->
+      <aside class="w-full md:w-60 flex flex-col gap-4 sticky top-24">
+        <div class="bg-white p-5 rounded-2xl border border-outline-variant/60 flex flex-col gap-5">
+          <h3 class="font-bold text-sm text-on-surface uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-lg">filter_alt</span> Refine Catalog
+          </h3>
+
+          <!-- Category Select -->
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-bold text-on-surface-variant">Select Category</label>
+            <select id="category-filter" onchange="filterCategory(this.value)" class="w-full p-2.5 bg-zinc-50 border border-outline-variant/60 rounded-xl text-xs">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+
+          <!-- Rating Select -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-on-surface-variant">Ratings</label>
+            <div class="flex flex-col gap-2 text-xs font-medium text-on-surface-variant">
+              <label class="flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+                <input type="radio" name="rating-filter" value="0" checked onchange="filterRating(0)" class="text-primary focus:ring-primary border-outline-variant" /> All Ratings
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+                <input type="radio" name="rating-filter" value="4" onchange="filterRating(4)" class="text-primary focus:ring-primary border-outline-variant" /> 4★ &amp; Above
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+                <input type="radio" name="rating-filter" value="3" onchange="filterRating(3)" class="text-primary focus:ring-primary border-outline-variant" /> 3★ &amp; Above
+              </label>
+            </div>
+          </div>
+
+          <button onclick="resetFilters()" class="w-full py-2.5 bg-[#FAF7F5] hover:bg-zinc-100 text-primary rounded-xl font-bold text-xs transition-colors">
+            Reset Filters
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right side: Search Catalog -->
+      <section class="flex-grow w-full flex flex-col gap-6">
+        <!-- Search Input -->
+        <div class="relative w-full">
+          <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[24px]">search</span>
+          <input type="text" id="search-input" onkeyup="handleSearchKey(event)" class="w-full pl-14 pr-24 py-3.5 bg-white border border-outline-variant/60 rounded-2xl text-sm" placeholder="Search by title, author, description..." />
+          <button onclick="triggerSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 bg-primary text-white font-semibold text-xs rounded-xl hover:bg-primary-container transition-all">Search</button>
+        </div>
+
+        <div id="filter-chips" class="flex flex-wrap gap-2 hidden"></div>
+
+        <!-- Books Grid -->
+        <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          <!-- loaded dynamically -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-center items-center gap-3 pt-6"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-10 py-6 border-t border-outline-variant/60 text-xs text-on-surface-variant flex justify-between items-center max-w-[1200px] w-full mx-auto">
+      <p>© 2026 Bookwise. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let searchVal = '';
+    let categoryVal = '';
+    let minRatingVal = 0;
+    let currentPage = 1;
+    let currentBooksPool = [];
+
+    // Parse URL params for landing page search integration
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('search')) {
+      searchVal = urlParams.get('search');
+      document.getElementById('search-input').value = searchVal;
+    }
+
+    async function loadCatalog() {
+      renderSkeletons();
+      
+      let endpoint = `/api/books?page=${currentPage}&limit=12`;
+      if (searchVal) endpoint += `&search=${encodeURIComponent(searchVal)}`;
+      if (categoryVal) endpoint += `&category=${encodeURIComponent(categoryVal)}`;
+
+      try {
+        const data = await apiFetch(endpoint);
+        if (data) {
+          currentBooksPool = data.books;
+          renderBooks(data.books);
+          renderPagination(data.totalPages, data.currentPage);
+          populateCategoryFilter(data.categories);
+          updateChips();
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderSkeletons() {
+      const grid = document.getElementById('books-grid');
+      grid.innerHTML = Array(8).fill(0).map(() => `
+        <div class="bg-white rounded-2xl p-4 border border-outline-variant/30 flex flex-col gap-3 animate-pulse">
+          <div class="w-full aspect-[2/3] bg-zinc-200 rounded-xl"></div>
+          <div class="h-4 bg-zinc-200 rounded w-3/4"></div>
+          <div class="h-3 bg-zinc-200 rounded w-1/2"></div>
+        </div>
+      `).join('');
+    }
+
+    function renderBooks(books) {
+      const grid = document.getElementById('books-grid');
+      const filtered = books.filter(b => b.averageRating >= minRatingVal);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-20 text-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-[64px] mb-2 opacity-50">search_off</span>
+            <p class="font-serif text-2xl font-bold">No books found</p>
+            <p class="text-xs mt-1">Try resetting your filters or adjusting your search term.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(book => `
+        <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="bg-white rounded-2xl p-4 border border-outline-variant/30 hover:border-primary/20 shadow-sm hover:shadow-md hover:translate-y-[-4px] transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+          <div class="flex flex-col gap-3">
+            <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-sm bg-zinc-100">
+              <img src="${book.image}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" />
+              <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-0.5 font-bold">
+                <span class="material-symbols-outlined text-amber-400 text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span>${book.averageRating ? book.averageRating.toFixed(1) : '2.5'}</span>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1 leading-tight mt-1">${book.title}</h4>
+              <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-zinc-100 flex justify-between items-center text-[10px]">
+            <span class="px-2 py-0.5 rounded-full bg-primary/5 text-primary font-semibold">${book.categories && book.categories[0] ? book.categories[0] : 'General'}</span>
+            <span class="text-on-surface-variant font-medium">${book.pageCount ? book.pageCount + ' pgs' : ''}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function populateCategoryFilter(categories) {
+      const select = document.getElementById('category-filter');
+      if (select.children.length > 1) return;
+
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.innerText = cat;
+        if (cat === categoryVal) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderPagination(totalPages, activePage) {
+      const pag = document.getElementById('pagination');
+      if (totalPages <= 1) {
+        pag.innerHTML = '';
+        return;
+      }
+
+      let html = `
+        <button onclick="changePage(${activePage - 1})" ${activePage === 1 ? 'disabled' : ''} class="p-2 border border-outline-variant rounded-xl disabled:opacity-40 hover:bg-zinc-50 transition-colors">
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= activePage - 1 && i <= activePage + 1)) {
+          html += `
+            <button onclick="changePage(${i})" class="w-8 h-8 rounded-xl text-xs font-bold transition-all ${i === activePage ? 'bg-primary text-white shadow-sm' : 'text-on-surface hover:bg-zinc-50'}">
+              ${i}
+            </button>
+          `;
+        } else if (i === activePage - 2 || i === activePage + 2) {
+          html += `<span class="opacity-50 text-xs">...</span>`;
+        }
+      }
+
+      html += `
+        <button onclick="changePage(${activePage + 1})" ${activePage === totalPages ? 'disabled' : ''} class="p-2 border border-outline-variant rounded-xl disabled:opacity-40 hover:bg-zinc-50 transition-colors">
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      `;
+
+      pag.innerHTML = html;
+    }
+
+    function changePage(page) {
+      currentPage = page;
+      loadCatalog();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleSearchKey(e) {
+      if (e.key === 'Enter') triggerSearch();
+    }
+
+    function triggerSearch() {
+      searchVal = document.getElementById('search-input').value;
+      currentPage = 1;
+      loadCatalog();
+    }
+
+    function filterCategory(cat) {
+      categoryVal = cat;
+      currentPage = 1;
+      loadCatalog();
+    }
+
+    function filterRating(rating) {
+      minRatingVal = parseFloat(rating);
+      renderBooks(currentBooksPool);
+      updateChips();
+    }
+
+    function updateChips() {
+      const container = document.getElementById('filter-chips');
+      let chipsHtml = '';
+
+      if (searchVal) {
+        chipsHtml += createChip(`Search: "${searchVal}"`, () => {
+          document.getElementById('search-input').value = '';
+          searchVal = '';
+          loadCatalog();
+        });
+      }
+      if (categoryVal) {
+        chipsHtml += createChip(`Category: ${categoryVal}`, () => {
+          document.getElementById('category-filter').value = '';
+          categoryVal = '';
+          loadCatalog();
+        });
+      }
+      if (minRatingVal) {
+        chipsHtml += createChip(`Rating: ${minRatingVal}★+`, () => {
+          const radios = document.getElementsByName('rating-filter');
+          radios[0].checked = true;
+          minRatingVal = 0;
+          renderBooks(currentBooksPool);
+        });
+      }
+
+      if (chipsHtml) {
+        container.innerHTML = chipsHtml;
+        container.classList.remove('hidden');
+      } else {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+      }
+    }
+
+    function createChip(text, onRemoveFn) {
+      const id = 'chip-' + Math.random().toString(36).substring(7);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.onclick = onRemoveFn;
+      }, 0);
+
+      return `
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
+          <span>${text}</span>
+          <button id="${id}" class="hover:text-primary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-xs">close</span>
+          </button>
+        </span>
+      `;
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('category-filter').value = '';
+      const radios = document.getElementsByName('rating-filter');
+      radios[0].checked = true;
+      
+      searchVal = '';
+      categoryVal = '';
+      minRatingVal = 0;
+      currentPage = 1;
+      
+      loadCatalog();
+    }
+
+    function handleProtectedLink(url) {
+      if (currentUser) {
+        window.location.href = url;
+      } else {
+        showToast('Please sign in to access this page.', 'warning');
+        openLoginModal();
+      }
+    }
+
+    function handleStartReading() {
+      if (currentUser) {
+        window.location.href = '/explore.html';
+      } else {
+        openLoginModal();
+      }
+    }
+
+    // Override updateHeaderNav dynamically for explore
+    const originalUpdateHeaderNav = updateHeaderNav;
+    updateHeaderNav = function() {
+      originalUpdateHeaderNav();
+      const welcome = document.getElementById('welcome-message');
+      const authSection = document.getElementById('header-auth-section');
+      if (currentUser && welcome) {
+        welcome.innerText = `Welcome back, ${currentUser.name}!`;
+        const dashboardLink = currentUser.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        authSection.innerHTML = `
+          <div class="flex items-center gap-4">
+            <a href="${dashboardLink}" class="flex items-center gap-2 group">
+              <img src="${currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary group-hover:scale-105 transition-transform" />
+              <span class="hidden md:inline font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${currentUser.name}</span>
+            </a>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-outline-variant rounded-xl text-on-surface hover:bg-black/5 font-semibold text-xs active:scale-95 transition-all">Logout</button>
+          </div>
+        `;
+      }
+    };
+
+    // Load initial
+    loadCatalog();
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
+    }
+  </script>
+</body>
+</html>

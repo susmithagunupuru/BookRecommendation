@@ -1,0 +1,9 @@
+{
+  "name": "bookwise-monorepo",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix server",
+    "dev": "npm run dev --prefix server",
+    "import": "npm run import --prefix server"
+  }
+}

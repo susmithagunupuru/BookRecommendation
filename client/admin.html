@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html class="scroll-smooth light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Admin Portal | Bookwise</title>
+  <!-- Google Fonts: Be Vietnam Pro for UI and Playfair Display for Serif headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans flex min-h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-white border-r border-outline-variant/60 flex flex-col justify-between p-6 fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 flex-shrink-0">
+    <div class="flex flex-col gap-8 relative">
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar()" class="lg:hidden absolute top-0 right-0 text-on-surface-variant hover:text-on-surface p-1 rounded-xl hover:bg-black/5 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 px-2 cursor-pointer" onclick="window.location.href='/'">
+        <span class="material-symbols-outlined text-primary text-[32px] font-bold">local_library</span>
+        <span class="font-serif text-2xl font-bold text-on-surface">Bookwise</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-2">
+        <!-- Home -->
+        <a href="/" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </a>
+        <!-- Explore -->
+        <a href="/explore.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">explore</span>
+          <span>Explore</span>
+        </a>
+        <!-- Admin Portal (Active) -->
+        <a href="/admin.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-primary text-white font-semibold transition-all">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+          <span>Admin Portal</span>
+        </a>
+        <!-- User View Dashboard -->
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-zinc-100 hover:text-on-surface font-medium transition-all">
+          <span class="material-symbols-outlined">person</span>
+          <span>Reader View</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Card -->
+    <div class="bg-[#FAF7F5] rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden border border-outline-variant/30">
+      <div class="absolute -right-3 -top-3 w-10 h-10 bg-primary/5 rounded-full blur-xl"></div>
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">security</span>
+      <p class="text-xs text-on-surface font-semibold leading-relaxed">Bookwise Control Console. Add library resources, audit accounts, and view global analytics.</p>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS -->
+  <div class="flex-grow min-h-screen flex flex-col justify-between min-w-0">
+    
+    <!-- Top Bar -->
+    <header class="h-20 px-6 lg:px-10 flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-30">
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileSidebar()" class="lg:hidden mr-3 p-2 -ml-2 text-on-surface-variant hover:text-on-surface hover:bg-black/5 rounded-xl transition-all flex items-center justify-center">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="text-sm font-medium text-on-surface-variant" id="welcome-message">Librarian Suite Control Panel</div>
+      </div>
+      
+      <!-- User profile header section -->
+      <div class="flex items-center gap-4" id="header-auth-section">
+        <!-- populated dynamically -->
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="px-10 flex-grow max-w-[1200px] w-full mx-auto mb-12 flex flex-col gap-6">
+      
+      <!-- Tab selectors -->
+      <div class="flex border-b border-outline-variant/60 overflow-x-auto whitespace-nowrap scrollbar-none">
+        <button onclick="switchTab('analytics')" id="btn-tab-analytics" class="py-4 px-6 font-bold border-b-2 border-primary text-primary flex items-center gap-2 transition-all text-xs uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">analytics</span> Analytics Summary
+        </button>
+        <button onclick="switchTab('inventory')" id="btn-tab-inventory" class="py-4 px-6 font-bold border-b-2 border-transparent text-on-surface-variant flex items-center gap-2 transition-all text-xs uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">inventory</span> Catalog Inventory
+        </button>
+        <button onclick="switchTab('users')" id="btn-tab-users" class="py-4 px-6 font-bold border-b-2 border-transparent text-on-surface-variant flex items-center gap-2 transition-all text-xs uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">group</span> User Accounts
+        </button>
+      </div>
+
+      <!-- 1. TAB: Analytics -->
+      <section id="section-analytics" class="flex flex-col gap-6 animate-in fade-in duration-200">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-[20px] border border-outline-variant/60 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[24px]">group</span>
+            </div>
+            <div>
+              <h4 id="analytics-users" class="text-3xl font-serif font-extrabold text-on-surface">0</h4>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Active Readers</p>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-[20px] border border-outline-variant/60 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[24px]">book</span>
+            </div>
+            <div>
+              <h4 id="analytics-books" class="text-3xl font-serif font-extrabold text-on-surface">0</h4>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Book Listings</p>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-[20px] border border-outline-variant/60 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[24px]">favorite</span>
+            </div>
+            <div>
+              <h4 id="analytics-likes" class="text-3xl font-serif font-extrabold text-on-surface">0</h4>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant">Total Book Likes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail listings -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Most Liked books -->
+          <div class="bg-white p-6 rounded-2xl border border-outline-variant/60 shadow-sm flex flex-col">
+            <h3 class="font-serif text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">thumb_up</span> Most Liked Books
+            </h3>
+            <div id="list-most-liked" class="flex flex-col gap-3.5"></div>
+          </div>
+          <!-- Highest rated books -->
+          <div class="bg-white p-6 rounded-2xl border border-outline-variant/60 shadow-sm flex flex-col">
+            <h3 class="font-serif text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">star</span> Highest Rated Books
+            </h3>
+            <div id="list-highest-rated" class="flex flex-col gap-3.5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TAB: Inventory -->
+      <section id="section-inventory" class="hidden flex flex-col gap-6 animate-in fade-in duration-200">
+        <div class="flex justify-between items-center">
+          <h3 class="font-serif text-xl font-bold text-on-surface">Library Catalog Listings</h3>
+          <button onclick="openBookModal()" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-sm">add</span> Add New Book
+          </button>
+        </div>
+
+        <!-- Search input in inventory -->
+        <div class="relative w-full">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[22px]">search</span>
+          <input type="text" id="inventory-search" onkeyup="handleInventorySearch(event)" class="w-full pl-12 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm" placeholder="Search catalog by title..." />
+        </div>
+
+        <!-- Inventory List Table -->
+        <div class="bg-white rounded-2xl border border-outline-variant/60 overflow-x-auto shadow-sm">
+          <table class="w-full text-left border-collapse min-w-[700px]">
+            <thead>
+              <tr class="bg-[#FAF7F5] border-b border-outline-variant font-bold text-xs uppercase tracking-wider text-on-surface-variant">
+                <th class="p-4">Cover</th>
+                <th class="p-4">Title</th>
+                <th class="p-4">Author</th>
+                <th class="p-4">Category</th>
+                <th class="p-4">Rating</th>
+                <th class="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body" class="text-xs text-on-surface font-medium divide-y divide-zinc-100">
+              <!-- populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Inventory Pagination -->
+        <div id="inventory-pag" class="flex justify-center items-center gap-3 pt-4"></div>
+      </section>
+
+      <!-- 3. TAB: Users -->
+      <section id="section-users" class="hidden flex flex-col gap-6 animate-in fade-in duration-200">
+        <h3 class="font-serif text-xl font-bold text-on-surface">User Accounts Registry</h3>
+
+        <div class="bg-white rounded-2xl border border-outline-variant/60 overflow-x-auto shadow-sm">
+          <table class="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+              <tr class="bg-[#FAF7F5] border-b border-outline-variant font-bold text-xs uppercase tracking-wider text-on-surface-variant">
+                <th class="p-4">Reader profile</th>
+                <th class="p-4">Email</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body" class="text-xs text-on-surface font-medium divide-y divide-zinc-100">
+              <!-- populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-10 py-6 border-t border-outline-variant/60 text-xs text-on-surface-variant flex justify-between items-center max-w-[1200px] w-full mx-auto">
+      <p>© 2026 Bookwise. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Add/Edit Book Modal -->
+  <div id="book-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeBookModal()"></div>
+    <div class="relative bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 border border-outline-variant">
+      <button onclick="closeBookModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      
+      <h2 id="modal-title" class="font-serif font-extrabold text-2xl text-on-surface mb-6">Add New Book</h2>
+      
+      <form id="book-form" onsubmit="handleBookSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-title">Title *</label>
+          <input type="text" id="book-in-title" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" required />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-subtitle">Subtitle</label>
+          <input type="text" id="book-in-subtitle" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-authors">Authors (comma separated) *</label>
+          <input type="text" id="book-in-authors" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" placeholder="Author A, Author B" required />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-categories">Categories (comma separated)</label>
+          <input type="text" id="book-in-categories" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" placeholder="Fiction, Science" />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-publisher">Publisher</label>
+          <input type="text" id="book-in-publisher" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-published">Published Date</label>
+          <input type="text" id="book-in-published" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" placeholder="2026-06-21" />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-isbn">ISBN 13</label>
+          <input type="text" id="book-in-isbn" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" />
+        </div>
+        <div>
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-pages">Page Count</label>
+          <input type="number" id="book-in-pages" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs" />
+        </div>
+        <div class="col-span-full flex flex-col gap-2">
+          <label class="block font-bold text-xs text-on-surface mb-1">Cover Photo</label>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-20 bg-zinc-50 border border-outline-variant/60 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+              <span id="book-cover-placeholder" class="material-symbols-outlined text-zinc-400">image</span>
+              <img id="book-cover-preview" class="hidden w-full h-full object-cover" />
+            </div>
+            <button type="button" onclick="triggerBookImageUpload()" class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-xs font-bold rounded-xl active:scale-95 transition-all">
+              Upload Cover Photo
+            </button>
+            <input type="file" id="book-in-image-file" accept="image/*" class="hidden" onchange="previewBookImage(event)" />
+          </div>
+        </div>
+        <div class="col-span-full">
+          <label class="block font-bold text-xs text-on-surface mb-1" for="book-in-desc">Description</label>
+          <textarea id="book-in-desc" rows="4" class="w-full px-4 py-3 bg-zinc-50 border border-outline-variant/60 rounded-lg text-xs"></textarea>
+        </div>
+        
+        <div class="col-span-full flex justify-end gap-3 pt-4 border-t border-outline-variant/30">
+          <button type="button" onclick="closeBookModal()" class="px-5 py-2.5 border border-outline-variant/60 rounded-xl text-on-surface hover:bg-zinc-50 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let activeTab = 'analytics';
+    let editBookId = '';
+    let inventoryPage = 1;
+    let inventorySearchVal = '';
+    let bookCoverBase64 = '';
+
+    function triggerBookImageUpload() {
+      document.getElementById('book-in-image-file').click();
+    }
+
+    function previewBookImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        bookCoverBase64 = reader.result;
+        const img = document.getElementById('book-cover-preview');
+        const placeholder = document.getElementById('book-cover-placeholder');
+        img.src = reader.result;
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Override header profile dynamically
+    const originalUpdateHeaderNav = updateHeaderNav;
+    updateHeaderNav = function() {
+      originalUpdateHeaderNav();
+      const welcome = document.getElementById('welcome-message');
+      const authSection = document.getElementById('header-auth-section');
+      if (currentUser && welcome) {
+        welcome.innerText = `Welcome back, ${currentUser.name}!`;
+        const dashboardLink = currentUser.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        authSection.innerHTML = `
+          <div class="flex items-center gap-4">
+            <a href="${dashboardLink}" class="flex items-center gap-2 group">
+              <img src="${currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary group-hover:scale-105 transition-transform object-cover" />
+              <span class="hidden md:inline font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${currentUser.name}</span>
+            </a>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-outline-variant rounded-xl text-on-surface hover:bg-black/5 font-semibold text-xs active:scale-95 transition-all">Logout</button>
+          </div>
+        `;
+      }
+    };
+
+    function switchTab(tab) {
+      activeTab = tab;
+      const tabs = ['analytics', 'inventory', 'users'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`btn-tab-${t}`);
+        const sec = document.getElementById(`section-${t}`);
+        if (t === tab) {
+          btn.className = 'py-4 px-6 font-bold border-b-2 border-primary text-primary flex items-center gap-2 transition-all text-xs uppercase tracking-wider';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-4 px-6 font-bold border-b-2 border-transparent text-on-surface-variant flex items-center gap-2 transition-all text-xs uppercase tracking-wider';
+          sec.classList.add('hidden');
+        }
+      });
+
+      if (tab === 'analytics') loadAnalytics();
+      if (tab === 'inventory') loadInventory();
+      if (tab === 'users') loadUsers();
+    }
+
+    async function loadAnalytics() {
+      try {
+        const data = await apiFetch('/api/admin/stats');
+        if (data) {
+          document.getElementById('analytics-users').innerText = data.totalUsers;
+          document.getElementById('analytics-books').innerText = data.totalBooks;
+          document.getElementById('analytics-likes').innerText = data.totalLikes;
+
+          renderAnalyticsList('list-most-liked', data.mostLiked, 'likes', 'Likes');
+          renderAnalyticsList('list-highest-rated', data.highestRated, 'averageRating', '★ Rating');
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderAnalyticsList(elemId, books, metricName, metricLabel) {
+      const container = document.getElementById(elemId);
+      if (!books || books.length === 0) {
+        container.innerHTML = '<p class="text-xs text-on-surface-variant p-4">No books tracked yet.</p>';
+        return;
+      }
+
+      container.innerHTML = books.map(book => {
+        let valStr = '0.0';
+        if (metricName === 'averageRating') {
+          valStr = book[metricName] ? book[metricName].toFixed(1) : '2.5';
+        } else {
+          valStr = book[metricName] ? book[metricName].toString() : '0';
+        }
+
+        return `
+          <div class="flex justify-between items-center py-2.5 border-b border-zinc-100 last:border-b-0 group">
+            <div class="flex items-center gap-3">
+              <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=100'}" class="w-10 h-12 object-cover rounded-lg shadow-sm bg-zinc-50" />
+              <div>
+                <h4 class="font-bold text-sm text-on-surface line-clamp-1 leading-tight group-hover:text-primary transition-colors cursor-pointer" onclick="window.location.href='/book-details.html?id=${book._id}'">${book.title}</h4>
+                <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5">${book.authors ? book.authors.join(', ') : 'Unknown'}</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold whitespace-nowrap">
+              ${valStr} ${metricLabel}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadInventory() {
+      let endpoint = `/api/books?page=${inventoryPage}&limit=10`;
+      if (inventorySearchVal) endpoint += `&search=${encodeURIComponent(inventorySearchVal)}`;
+
+      try {
+        const data = await apiFetch(endpoint);
+        if (data) {
+          renderInventoryTable(data.books);
+          renderInventoryPagination(data.totalPages, data.currentPage);
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderInventoryTable(books) {
+      const tbody = document.getElementById('inventory-table-body');
+      if (books.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-on-surface-variant font-bold">No catalog items found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = books.map(book => {
+        const rating = book.averageRating ? book.averageRating.toFixed(1) : '2.5';
+        return `
+          <tr class="border-b border-zinc-100 hover:bg-[#FAF7F5]/40 transition-colors">
+            <td class="p-4"><img src="${book.image}" class="w-8 h-10 object-cover rounded shadow-sm bg-zinc-50" /></td>
+            <td class="p-4 font-bold max-w-xs truncate cursor-pointer hover:text-primary transition-colors" onclick="window.location.href='/book-details.html?id=${book._id}'">${book.title}</td>
+            <td class="p-4 truncate max-w-[120px]">${book.authors ? book.authors.join(', ') : 'Unknown'}</td>
+            <td class="p-4 text-[10px] font-bold uppercase"><span class="px-2 py-0.5 bg-primary/5 text-primary rounded-full border border-primary/10">${book.categories && book.categories[0] ? book.categories[0] : 'General'}</span></td>
+            <td class="p-4 font-bold flex items-center gap-1"><span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> ${rating}</td>
+            <td class="p-4 text-right whitespace-nowrap">
+              <button onclick="editBook('${book._id}')" class="px-3 py-1.5 border border-primary text-primary hover:bg-primary/5 rounded-lg font-bold text-[10px] mr-2 active:scale-95 transition-all">Edit</button>
+              <button onclick="deleteBook('${book._id}')" class="px-3 py-1.5 border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg font-bold text-[10px] active:scale-95 transition-all">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderInventoryPagination(totalPages, activePage) {
+      const pag = document.getElementById('inventory-pag');
+      if (totalPages <= 1) {
+        pag.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+      for (let i = 1; i <= totalPages; i++) {
+        html += `
+          <button onclick="changeInventoryPage(${i})" class="w-8 h-8 rounded-lg font-bold text-xs ${i === activePage ? 'bg-primary text-white' : 'text-on-surface hover:bg-zinc-100'}">
+            ${i}
+          </button>
+        `;
+      }
+      pag.innerHTML = html;
+    }
+
+    function changeInventoryPage(page) {
+      inventoryPage = page;
+      loadInventory();
+    }
+
+    function handleInventorySearch(e) {
+      inventorySearchVal = e.target.value;
+      inventoryPage = 1;
+      loadInventory();
+    }
+
+    async function editBook(id) {
+      try {
+        const data = await apiFetch(`/api/books/${id}`);
+        if (data && data.book) {
+          const book = data.book;
+          editBookId = book._id;
+          document.getElementById('modal-title').innerText = 'Edit Book Details';
+          
+          document.getElementById('book-in-title').value = book.title;
+          document.getElementById('book-in-subtitle').value = book.subtitle || '';
+          document.getElementById('book-in-authors').value = book.authors ? book.authors.join(', ') : '';
+          document.getElementById('book-in-categories').value = book.categories ? book.categories.join(', ') : '';
+          document.getElementById('book-in-publisher').value = book.publisher || '';
+          document.getElementById('book-in-published').value = book.publishedDate || '';
+          document.getElementById('book-in-isbn').value = book.isbn13 || '';
+          document.getElementById('book-in-pages').value = book.pageCount || 0;
+          document.getElementById('book-in-desc').value = book.description || '';
+
+          bookCoverBase64 = book.image || '';
+          const previewImg = document.getElementById('book-cover-preview');
+          const placeholder = document.getElementById('book-cover-placeholder');
+          if (bookCoverBase64) {
+            previewImg.src = bookCoverBase64;
+            previewImg.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+          } else {
+            previewImg.src = '';
+            previewImg.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+          }
+
+          openBookModal();
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteBook(id) {
+      if (!confirm('Are you sure you want to delete this book?')) return;
+
+      try {
+        await apiFetch(`/api/books/${id}`, { method: 'DELETE' });
+        showToast('Book deleted successfully');
+        loadInventory();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function openBookModal() {
+      document.getElementById('book-modal').classList.remove('hidden');
+    }
+
+    function closeBookModal() {
+      document.getElementById('book-modal').classList.add('hidden');
+      document.getElementById('book-form').reset();
+      editBookId = '';
+      document.getElementById('modal-title').innerText = 'Add New Book';
+
+      // Reset cover photo preview state
+      bookCoverBase64 = '';
+      document.getElementById('book-cover-preview').src = '';
+      document.getElementById('book-cover-preview').classList.add('hidden');
+      document.getElementById('book-cover-placeholder').classList.remove('hidden');
+    }
+
+    async function handleBookSubmit(event) {
+      event.preventDefault();
+      
+      const payload = {
+        title: document.getElementById('book-in-title').value,
+        subtitle: document.getElementById('book-in-subtitle').value,
+        authors: document.getElementById('book-in-authors').value.split(',').map(a => a.trim()).filter(a => a),
+        categories: document.getElementById('book-in-categories').value.split(',').map(c => c.trim()).filter(c => c),
+        publisher: document.getElementById('book-in-publisher').value,
+        publishedDate: document.getElementById('book-in-published').value,
+        isbn13: document.getElementById('book-in-isbn').value,
+        pageCount: parseInt(document.getElementById('book-in-pages').value) || 0,
+        image: bookCoverBase64,
+        description: document.getElementById('book-in-desc').value
+      };
+
+      try {
+        let res = null;
+        if (editBookId) {
+          res = await apiFetch(`/api/books/${editBookId}`, {
+            method: 'PUT',
+            body: payload
+          });
+          showToast('Book details updated!');
+        } else {
+          res = await apiFetch('/api/books', {
+            method: 'POST',
+            body: payload
+          });
+          showToast('New book added to library catalog!');
+        }
+
+        if (res) {
+          closeBookModal();
+          loadInventory();
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const users = await apiFetch('/api/admin/users');
+        if (users) {
+          renderUsersTable(users);
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('users-table-body');
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-on-surface-variant font-bold">No registered users in registry.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => `
+        <tr class="border-b border-zinc-100 hover:bg-[#FAF7F5]/40 transition-colors">
+          <td class="p-4 flex items-center gap-3">
+            <img src="${user.profileImage || 'https://lh3.googleusercontent.com/aida-public/avatar-default.png'}" class="w-8 h-8 rounded-full border border-primary object-cover" />
+            <div>
+              <span class="font-bold block">${user.name}</span>
+              <span class="text-[10px] text-on-surface-variant">@${user.username}</span>
+            </div>
+          </td>
+          <td class="p-4 font-semibold">${user.email}</td>
+          <td class="p-4 font-bold">
+            <span class="px-2.5 py-0.5 rounded-full text-[9px] uppercase ${user.verified ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-rose-50 border border-rose-200 text-rose-700'}">
+              ${user.verified ? 'Active' : 'Blocked'}
+            </span>
+          </td>
+          <td class="p-4 text-right whitespace-nowrap">
+            <button onclick="toggleBlockUser('${user._id}', ${user.verified})" class="px-3 py-1.5 border ${user.verified ? 'border-amber-400 text-amber-600 hover:bg-amber-50' : 'border-emerald-400 text-emerald-600 hover:bg-emerald-50'} rounded-lg font-bold text-[10px] mr-2 active:scale-95 transition-all">
+              ${user.verified ? 'Block' : 'Unblock'}
+            </button>
+            <button onclick="deleteUser('${user._id}')" class="px-3 py-1.5 border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg font-bold text-[10px] active:scale-95 transition-all">
+              Delete Account
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleBlockUser(id, isVerified) {
+      try {
+        await apiFetch(`/api/admin/users/${id}/block`, {
+          method: 'PUT',
+          body: { block: isVerified }
+        });
+        showToast(isVerified ? 'User blocked successfully' : 'User unblocked successfully');
+        loadUsers();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Are you sure you want to delete this user? All their wishlists and reviews will be removed.')) return;
+
+      try {
+        await apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+        showToast('User account deleted');
+        loadUsers();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Default loader
+    loadAnalytics();
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
+    }
+  </script>
+</body>
+</html>

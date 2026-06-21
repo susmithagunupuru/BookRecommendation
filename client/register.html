@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Register | Bookwise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A75D3D",          // Bookwise Terracotta Brown
+            "primary-container": "#8C492E",
+            "on-primary": "#ffffff",
+            "background": "#FAF7F5",       // Bookwise Soft Cream background
+            "surface": "#ffffff",
+            "on-surface": "#232323",
+            "on-surface-variant": "#6B6A68",
+            "outline-variant": "#E8E5E2"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      min-height: max(884px, 100dvh);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
+    }
+    .input-focus-ring:focus {
+      outline: none;
+      border-color: #A75D3D;
+      box-shadow: 0 0 0 2px rgba(167, 93, 61, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface flex flex-col justify-center items-center">
+  
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+    <div class="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[100px]"></div>
+  </div>
+
+  <main class="relative z-10 w-full max-w-[560px] px-margin-mobile py-10 animate-in fade-in duration-300">
+    <div class="glass-card rounded-[24px] p-8 md:p-10 bg-white/80">
+      
+      <div class="text-center mb-6 cursor-pointer" onclick="window.location.href='/'">
+        <div class="flex justify-center mb-2">
+          <span class="material-symbols-outlined text-[40px] text-primary">local_library</span>
+        </div>
+        <h1 class="font-serif text-3xl font-bold text-on-surface mb-2">Create your account</h1>
+        <p class="text-xs text-on-surface-variant">Join Bookwise to access thousands of digital resources and personalized collections.</p>
+      </div>
+
+      <!-- Role Selector Tab -->
+      <div class="flex border-b border-outline-variant/60 mb-6">
+        <button type="button" id="reg-tab-user" onclick="setRegistrationRole('user')" class="flex-1 py-3 text-center font-bold border-b-2 border-primary text-primary text-xs uppercase tracking-wider">Reader</button>
+        <button type="button" id="reg-tab-admin" onclick="setRegistrationRole('admin')" class="flex-1 py-3 text-center font-bold border-b-2 border-transparent text-on-surface-variant text-xs uppercase tracking-wider">Librarian</button>
+      </div>
+
+      <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+        <!-- Profile Image Upload (User Only) -->
+        <div id="profile-upload-section" class="flex flex-col items-center mb-4">
+          <div class="relative group">
+            <div class="w-24 h-24 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center bg-zinc-50 transition-all group-hover:border-primary overflow-hidden">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary" id="avatar-placeholder">person</span>
+              <img class="hidden object-cover w-full h-full animate-in fade-in" id="avatar-preview" src=""/>
+            </div>
+            <label class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer shadow-md hover:scale-105 active:scale-95 transition-all" for="profile-upload">
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              <input accept="image/*" class="hidden" id="profile-upload" onchange="previewImage(event)" type="file"/>
+            </label>
+          </div>
+          <span class="text-[10px] font-bold text-on-surface-variant mt-2 uppercase">Upload Profile Picture</span>
+        </div>
+
+        <!-- Name Inputs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col space-y-1">
+            <label class="text-xs font-bold text-on-surface" for="full-name" id="name-label">Full Name</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">badge</span>
+              <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="full-name" placeholder="Alex Scholar" required type="text"/>
+            </div>
+          </div>
+          <div class="flex flex-col space-y-1" id="username-container">
+            <label class="text-xs font-bold text-on-surface" for="username">Username</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">alternate_email</span>
+              <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="username" placeholder="alex.scholar" type="text"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="flex flex-col space-y-1">
+          <label class="text-xs font-bold text-on-surface" for="email">Email Address</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">mail</span>
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="email" placeholder="alex@domain.edu" required type="email"/>
+          </div>
+        </div>
+
+        <!-- Password Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col space-y-1">
+            <label class="text-xs font-bold text-on-surface" for="password">Password</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">lock</span>
+              <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="password" placeholder="••••••••" required type="password"/>
+            </div>
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label class="text-xs font-bold text-on-surface" for="confirm-password">Confirm Password</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">lock_clock</span>
+              <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="confirm-password" placeholder="••••••••" required type="password"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Secret Key -->
+        <div id="admin-key-container" class="hidden flex flex-col space-y-1 animate-in slide-in-from-top-2 duration-200">
+          <label class="text-xs font-bold text-on-surface" for="secret-key">Secret Admin Key</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">vpn_key</span>
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm input-focus-ring" id="secret-key" placeholder="Enter registration secret key" type="password"/>
+          </div>
+        </div>
+
+        <div class="flex items-start space-x-3 pt-2">
+          <input class="mt-1 w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" id="terms" required type="checkbox"/>
+          <label class="text-xs text-on-surface-variant" for="terms">
+            I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+          </label>
+        </div>
+
+        <button class="w-full py-3.5 bg-primary hover:bg-primary-container text-white font-bold text-sm rounded-xl shadow-md active:scale-[0.98] transition-all mt-4 flex items-center justify-center space-x-2" type="submit">
+          <span>Register Account</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+
+        <div class="text-center mt-6">
+          <p class="text-xs text-on-surface-variant">
+            Already have an account? 
+            <a class="text-primary font-bold hover:underline ml-1" href="/index.html">Login here</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let activeRole = 'user';
+    let base64Avatar = '';
+
+    function setRegistrationRole(role) {
+      activeRole = role;
+      const userTab = document.getElementById('reg-tab-user');
+      const adminTab = document.getElementById('reg-tab-admin');
+      const profileUpload = document.getElementById('profile-upload-section');
+      const usernameContainer = document.getElementById('username-container');
+      const adminKeyContainer = document.getElementById('admin-key-container');
+      const nameLabel = document.getElementById('name-label');
+      const secretInput = document.getElementById('secret-key');
+      const usernameInput = document.getElementById('username');
+
+      if (role === 'user') {
+        userTab.className = 'flex-1 py-3 text-center font-bold border-b-2 border-primary text-primary text-xs uppercase tracking-wider';
+        adminTab.className = 'flex-1 py-3 text-center font-bold border-b-2 border-transparent text-on-surface-variant text-xs uppercase tracking-wider';
+        profileUpload.classList.remove('hidden');
+        usernameContainer.classList.remove('hidden');
+        adminKeyContainer.classList.add('hidden');
+        nameLabel.innerText = 'Full Name';
+        secretInput.required = false;
+        usernameInput.required = true;
+      } else {
+        adminTab.className = 'flex-1 py-3 text-center font-bold border-b-2 border-primary text-primary text-xs uppercase tracking-wider';
+        userTab.className = 'flex-1 py-3 text-center font-bold border-b-2 border-transparent text-on-surface-variant text-xs uppercase tracking-wider';
+        profileUpload.classList.add('hidden');
+        usernameContainer.classList.add('hidden');
+        adminKeyContainer.classList.remove('hidden');
+        nameLabel.innerText = 'Admin Name';
+        secretInput.required = true;
+        usernameInput.required = false;
+      }
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      const placeholder = document.getElementById('avatar-placeholder');
+      const preview = document.getElementById('avatar-preview');
+      
+      reader.onload = function() {
+        base64Avatar = reader.result;
+        preview.src = reader.result;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      }
+      reader.readAsDataURL(file);
+    }
+
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('full-name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const username = document.getElementById('username').value;
+      const secretKey = document.getElementById('secret-key').value;
+
+      if (password !== confirmPassword) {
+        showToast('Passwords do not match!', 'error');
+        return;
+      }
+
+      try {
+        const payload = {
+          role: activeRole,
+          email,
+          password,
+          confirmPassword
+        };
+
+        if (activeRole === 'user') {
+          payload.name = name;
+          payload.username = username;
+          if (base64Avatar) {
+            payload.profileImage = base64Avatar;
+          }
+        } else {
+          payload.adminName = name;
+          payload.secretKey = secretKey;
+        }
+
+        const data = await apiFetch('/api/auth/register', {
+          method: 'POST',
+          body: payload
+        });
+
+        if (data) {
+          showToast('Registration successful! Redirecting to login...');
+          setTimeout(() => {
+            window.location.href = '/index.html';
+          }, 1500);
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Default init
+    setRegistrationRole('user');
+  </script>
+</body>
+</html>
