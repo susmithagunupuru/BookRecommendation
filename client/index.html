@@ -370,7 +370,15 @@
 
     async function loadTopPicks() {
       const grid = document.getElementById('top-picks-grid');
-      // Render skeletons
+
+      // Use sessionStorage cache to avoid re-fetching on every page load
+      const cached = sessionStorage.getItem('topPicks');
+      if (cached) {
+        renderTopPicks(JSON.parse(cached), grid);
+        return;
+      }
+
+      // Render skeletons while loading
       grid.innerHTML = Array(5).fill(0).map(() => `
         <div class="flex flex-col gap-3 animate-pulse">
           <div class="w-full aspect-[2/3] bg-zinc-200 rounded-xl"></div>
@@ -382,7 +390,16 @@
       try {
         const data = await apiFetch('/api/books?limit=5');
         if (data && data.books) {
-          grid.innerHTML = data.books.map(book => `
+          sessionStorage.setItem('topPicks', JSON.stringify(data.books));
+          renderTopPicks(data.books, grid);
+        }
+      } catch (e) {
+        grid.innerHTML = '<p class="col-span-full text-xs text-on-surface-variant">Failed to load top picks.</p>';
+      }
+    }
+
+    function renderTopPicks(books, grid) {
+      grid.innerHTML = books.map(book => `
             <div onclick="window.location.href='/book-details.html?id=${book._id}'" class="cursor-pointer group flex flex-col justify-between transition-all duration-300">
               <div class="flex flex-col gap-2">
                 <div class="aspect-[2/3] rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300 relative bg-zinc-100">
@@ -399,10 +416,6 @@
               </div>
             </div>
           `).join('');
-        }
-      } catch (e) {
-        grid.innerHTML = '<p class="col-span-full text-xs text-on-surface-variant">Failed to load top picks.</p>';
-      }
     }
 
     loadTopPicks();

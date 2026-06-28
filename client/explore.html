@@ -268,7 +268,12 @@
 
     function populateCategoryFilter(categories) {
       const select = document.getElementById('category-filter');
-      if (select.children.length > 1) return;
+      if (select.children.length > 1) return; // already populated
+
+      // Cache categories in sessionStorage
+      if (!sessionStorage.getItem('bookCategories')) {
+        sessionStorage.setItem('bookCategories', JSON.stringify(categories));
+      }
 
       categories.forEach(cat => {
         const opt = document.createElement('option');

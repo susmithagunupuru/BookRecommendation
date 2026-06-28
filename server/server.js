@@ -130,10 +130,17 @@ app.post('/api/auth/register', async (req, res) => {
 
 // 2. Auth Login
 app.post('/api/auth/login', async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password, role, secretKey } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
+  }
+
+  // Validate admin secret key before even querying the DB
+  if (role === 'admin') {
+    if (!secretKey || secretKey !== ADMIN_SECRET_KEY) {
+      return res.status(403).json({ message: 'Invalid Admin Secret Key. Access denied.' });
+    }
   }
 
   try {
