@@ -18,6 +18,9 @@ server/.env.production.local
 .vercel/
 server/.vercel/
 
+# Large data files (already imported to Atlas)
+server/assets/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
